@@ -12,10 +12,12 @@ import {
   OnDestroy,
   OnChanges,
   SimpleChanges,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-export type NgLazyLoadComponentImporter = () => Promise<{ module?: Type<any>, component: Type<any>, injector?: Injector }>;
+export type NgLazyLoadComponentImporter = () => Promise<{ component: Type<any>, module?: Type<any>, injector?: Injector }>;
 export type NgLazyLoadComponentOutput = { property: string, value: any };
 
 @Component({
@@ -25,6 +27,7 @@ export type NgLazyLoadComponentOutput = { property: string, value: any };
 <ng-content *ngIf="error" select="[error]"></ng-content>
 <ng-container #vcRef></ng-container>
 `,
+changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
 
@@ -47,7 +50,9 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
   private componentRef!: ComponentRef<any>;
   private subOutput: Array<Subscription> = [];
 
-  constructor(private injector: Injector) { }
+  constructor(private injector: Injector, private cdr: ChangeDetectorRef) { 
+    this.cdr.detach();
+  }
 
   ngOnDestroy(): void {
     this.unsubscribe();
@@ -63,6 +68,7 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
     try {
       this.isLoading = true;
       this.error = false;
+      this.cdr.detectChanges();
       if (this.componentRef) {
         this.vcRef.clear();
       }
@@ -76,12 +82,12 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
       this.setInput();
       this.setOutput();
       this.componentRef.changeDetectorRef.detectChanges();
-      this.isLoading = false;
     } catch (err) {
       this.error = true;
       throw err;
     } finally {
       this.isLoading = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -90,6 +96,7 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
       for (const property in this._componentInput) {
         this.componentRef.setInput(property, this._componentInput[property]);
       }
+      this.cdr.detectChanges();
     }
   }
 
