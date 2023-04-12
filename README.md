@@ -81,7 +81,10 @@ import { NgLazyLoadComponentImporter, NgLazyLoadComponentOutput } from 'ng-lazy-
     [lazyImporter]="lazyImporter" 
     [componentInput]="{testInput1, testInput2}" 
     (componentOutput)="onComponentOutput($event)"
-  ></ng-lazy-load-component>
+  >
+    <div #loading>Loading...</div> <!-- optional -->
+    <div #error>Ops!</div> <!-- optional -->
+  </ng-lazy-load-component>
   `,
 })
 export class AppComponent {
