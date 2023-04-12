@@ -1,0 +1,25 @@
+{
+  "name": "ng-lazy-load-component",
+  "version": "15.0.0",
+  "description": "Angular pipe and directive for type casting template variables.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nigrosimone/ng-lazy-load-component.git"
+  },
+  "keywords": [
+    "angular"
+  ],
+  "author": "Simone Nigro <nigro.simone@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nigrosimone/ng-lazy-load-component/issues"
+  },
+  "homepage": "https://github.com/nigrosimone/ng-lazy-load-component",
+  "peerDependencies": {
+    "@angular/common": "^15.0.0",
+    "@angular/core": "^15.0.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  }
+}

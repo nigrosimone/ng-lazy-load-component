@@ -1,0 +1,22 @@
+version: '2'
+plugins:
+  tslint:
+    enabled: true
+    config: tslint.json
+  nodesecurity:
+    enabled: true
+checks:
+  method-complexity:
+    config:
+      threshold: 20
+  method-lines:
+    config:
+      threshold: 50
+exclude_paths:
+  - '.github/'
+  - 'projects/**/*.spec.ts'
+  - 'projects/ng-lazy-load-component/karma.conf.js'
+  - 'projects/ng-lazy-load-component-demo/'
+ratings:
+  paths:
+    - 'projects/ng-lazy-load-component/**/**.ts'
