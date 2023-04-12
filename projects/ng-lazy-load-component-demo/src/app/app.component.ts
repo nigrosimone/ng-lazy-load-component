@@ -1,4 +1,5 @@
-import { Component, Type } from '@angular/core';
+import { Component } from '@angular/core';
+import { NgLazyLoadComponentImporter, NgLazyLoadComponentOutput } from '../../../ng-lazy-load-component/src/public-api';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -6,7 +7,10 @@ import { Component, Type } from '@angular/core';
   template: `
   <button (click)="loaded = false" [disabled]="!loaded">Unload</button> <button (click)="loaded = true" [disabled]="loaded">Load</button>
   <hr>
-  <ng-lazy-load-component [lazyImporter]="lazyImporter" [componentInput]="{testInput1, testInput2}" (componentOutput)="onComponentOutput($event)" *ngIf="loaded"></ng-lazy-load-component>
+  <h2>Classic</h2>
+  <ng-lazy-load-component [lazyImporter]="lazyImporterClassic" [componentInput]="{testInput1, testInput2}" (componentOutput)="onComponentOutput($event)" *ngIf="loaded"></ng-lazy-load-component>
+  <h2>Standalone</h2>
+  <ng-lazy-load-component [lazyImporter]="lazyImporterClassic" [componentInput]="{testInput1, testInput2}" (componentOutput)="onComponentOutput($event)" *ngIf="loaded"></ng-lazy-load-component>
   `,
 })
 export class AppComponent {
@@ -15,18 +19,21 @@ export class AppComponent {
   public testInput1 = 0;
   public testInput2 = 0;
 
-  lazyImporter = (): Promise<{ module: Type<any>, component: Type<any> }> => import('./test-lazy.module').then((m) => ({
+  lazyImporterClassic: NgLazyLoadComponentImporter = () => import('./test-classic.module').then((m) => ({
     module: m.TestLazyModule,
-    component: m.testLazyComponent
+    component: m.TestClassicComponent
   }));
 
-  onComponentOutput(event: { property: string, value: number }) {
+  lazyImporterStandalone: NgLazyLoadComponentImporter = () => import('./test-standalone.component').then((m) => ({
+    component: m.TestStandaloneComponent
+  }));
+
+  onComponentOutput(event: NgLazyLoadComponentOutput) {
     switch (event.property) {
       case 'testOutput1': this.testInput1 = event.value + 1; break;
       case 'testOutput2': this.testInput2 = event.value + 1; break;
       default:
         break;
     }
-
   }
 }

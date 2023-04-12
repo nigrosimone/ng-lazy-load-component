@@ -15,8 +15,8 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-export type LazyImporter = () => Promise<{ module: Type<any>, component: Type<any> }>;
-
+export type NgLazyLoadComponentImporter = () => Promise<{ module?: Type<any>, component: Type<any>, injector?: Injector }>;
+export type NgLazyLoadComponentOutput = { property: string, value: any };
 
 @Component({
   selector: 'ng-lazy-load-component',
@@ -32,7 +32,7 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
 
   @ViewChild('vcRef', { read: ViewContainerRef }) private vcRef!: ViewContainerRef;
 
-  @Input() lazyImporter!: LazyImporter;
+  @Input() lazyImporter!: NgLazyLoadComponentImporter;
 
   private _componentInput!: Record<string, any>;
   @Input()
@@ -41,7 +41,7 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
     this.setInput();
   }
 
-  @Output() componentOutput: EventEmitter<{ property: string, value: any }> = new EventEmitter();
+  @Output() componentOutput: EventEmitter<NgLazyLoadComponentOutput> = new EventEmitter();
 
   protected isLoading = false;
   protected error = false;
@@ -61,7 +61,7 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
     }
   }
 
-  async load(lazyImporter: LazyImporter) {
+  async load(lazyImporter: NgLazyLoadComponentImporter) {
     try {
       this.isLoading = true;
       this.error = false;
@@ -69,8 +69,12 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
         this.vcRef.clear();
       }
       const result = await lazyImporter();
-      const lazyModuleRef = createNgModule(result.module, this.injector);
-      this.componentRef = this.vcRef.createComponent(result.component, { ngModuleRef: lazyModuleRef });
+      if (result.module) {
+        const lazyModuleRef = createNgModule(result.module, result.injector || this.injector);
+        this.componentRef = this.vcRef.createComponent(result.component, { ngModuleRef: lazyModuleRef, injector: this.injector });
+      } else {
+        this.componentRef = this.vcRef.createComponent(result.component, { injector: result.injector || this.injector });
+      }
       this.setInput();
       this.setOutput();
       this.componentRef.changeDetectorRef.detectChanges();

@@ -1,10 +1,10 @@
 # NgLazyLoadComponent [![Build Status](https://app.travis-ci.com/nigrosimone/ng-lazy-load-component.svg?branch=main)](https://app.travis-ci.com/nigrosimone/ng-lazy-load-component) [![Coverage Status](https://coveralls.io/repos/github/nigrosimone/ng-lazy-load-component/badge.svg?branch=main)](https://coveralls.io/github/nigrosimone/ng-lazy-load-component?branch=main) [![NPM version](https://img.shields.io/npm/v/ng-lazy-load-component.svg)](https://www.npmjs.com/package/ng-lazy-load-component)
 
-Angular lazy load component into HTML template.
+Lazy load Angular component into HTML template.
 
 ## Description
 
-Angular lazy load component into HTML template.
+This library help to lazy load Angular component dynamically and render a at runtime. The `NgLazyLoadComponent` takes a function named lazyImporter as an input, which returns a Promise containing the component to be loaded.
 
 See the [stackblitz demo](https://stackblitz.com/edit/demo-ng-lazy-load-component?file=src%2Fapp%2Fapp.component.ts).
 
@@ -34,14 +34,13 @@ import { NgLazyLoadComponentModule } from 'ng-lazy-load-component';
     CommonModule,
     NgLazyLoadComponentModule,
   ],
-  providers: [],
   bootstrap: [AppComponent],
   ],
 })
 export class AppModule { }
 ```
 
-*Step 2*: The component to lazy load
+*Step 2*: This is `test-lazy.ts` an example of component with `NgModule` to lazy load (but also works with standalone component), eg.:
 
 ```ts
 import { CommonModule } from '@angular/common';
@@ -52,12 +51,12 @@ import { Component, EventEmitter, Input, NgModule, Output } from '@angular/core'
   template: `
   Input1: {{testInput1}} <button (click)="testOutput1.emit(testInput1)">Output1</button><br />
   Input2: {{testInput2}} <button (click)="testOutput2.emit(testInput2)">Output2</button>
-  `,
+  `
 })
 export class TestLazyComponent {
   @Input() testInput1 = 0;
-  @Output() testOutput1: EventEmitter<number> = new EventEmitter<number>();
   @Input() testInput2 = 0;
+  @Output() testOutput1: EventEmitter<number> = new EventEmitter<number>();
   @Output() testOutput2: EventEmitter<number> = new EventEmitter<number>();
 }
 
@@ -67,15 +66,13 @@ export class TestLazyComponent {
   exports: [TestLazyComponent],
 })
 export class TestLazyModule {}
-
-// Export the component
-export const testLazyComponent = TestLazyComponent;
 ```
 
 *Step 3*: usage
 
 ```ts
 import { Component } from '@angular/core';
+import { NgLazyLoadComponentImporter, NgLazyLoadComponentOutput } from 'ng-lazy-load-component';
 
 @Component({
   selector: 'app-root',
@@ -91,17 +88,15 @@ export class AppComponent {
   public testInput1 = 0;
   public testInput2 = 0;
 
-  lazyImporter = (): Promise<{ module: Type<any>, component: Type<any> }> => import('./test-lazy.module').then((m) => ({
-    module: m.TestLazyModule,
-    component: m.testLazyComponent
+  lazyImporter: NgLazyLoadComponentImporter = () => import('./test-lazy').then((m) => ({
+    component: m.TestLazyComponent, // Also works with standalone component
+    module: m.TestLazyModule // NgModule is optional!
   }));
 
-  onComponentOutput(event: { property: string, value: number }) {
+  onComponentOutput(event: NgLazyLoadComponentOutput) {
     switch (event.property) {
       case 'testOutput1': this.testInput1 = event.value + 1; break;
       case 'testOutput2': this.testInput2 = event.value + 1; break;
-      default:
-        break;
     }
   }
 }
