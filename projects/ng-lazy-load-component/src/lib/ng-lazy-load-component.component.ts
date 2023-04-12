@@ -21,10 +21,8 @@ export type NgLazyLoadComponentOutput<T = any> = { property: string, value: T };
 @Component({
   selector: 'ng-lazy-load-component',
   template: `
-<ng-content *ngIf="isLoading" select="[loading]">
-</ng-content>
-<ng-content *ngIf="error" select="[error]">
-</ng-content>
+<ng-content *ngIf="isLoading" select="[loading]"></ng-content>
+<ng-content *ngIf="error" select="[error]"></ng-content>
 <ng-container #vcRef></ng-container>
 `,
 })
