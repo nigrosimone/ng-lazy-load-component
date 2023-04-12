@@ -28,7 +28,7 @@ export class AppComponent {
     component: m.TestStandaloneComponent
   }));
 
-  onComponentOutput(event: NgLazyLoadComponentOutput) {
+  onComponentOutput(event: NgLazyLoadComponentOutput<number>) {
     switch (event.property) {
       case 'testOutput1': this.testInput1 = event.value + 1; break;
       case 'testOutput2': this.testInput2 = event.value + 1; break;

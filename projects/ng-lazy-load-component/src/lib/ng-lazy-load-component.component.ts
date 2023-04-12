@@ -16,7 +16,7 @@ import {
 import { Subscription } from 'rxjs';
 
 export type NgLazyLoadComponentImporter = () => Promise<{ module?: Type<any>, component: Type<any>, injector?: Injector }>;
-export type NgLazyLoadComponentOutput = { property: string, value: any };
+export type NgLazyLoadComponentOutput<T = any> = { property: string, value: T };
 
 @Component({
   selector: 'ng-lazy-load-component',
