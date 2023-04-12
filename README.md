@@ -85,14 +85,15 @@ import { NgLazyLoadComponentImporter, NgLazyLoadComponentOutput } from 'ng-lazy-
   `,
 })
 export class AppComponent {
-  public testInput1 = 0;
-  public testInput2 = 0;
+  public testInput1 = 0; // test-lazy component `@Input() testInput1`
+  public testInput2 = 0; // test-lazy component `@Input() testInput2`
 
   lazyImporter: NgLazyLoadComponentImporter = () => import('./test-lazy').then((m) => ({
     component: m.TestLazyComponent, // Also works with standalone component
     module: m.TestLazyModule // NgModule is optional!
   }));
 
+  /** test-lazy component outputs: `@Output() testOutput1` and `@Output() testOutput2` */
   onComponentOutput(event: NgLazyLoadComponentOutput) {
     switch (event.property) {
       case 'testOutput1': this.testInput1 = event.value + 1; break;
