@@ -32,10 +32,9 @@ import { NgLazyLoadComponentModule } from 'ng-lazy-load-component';
   imports: [
     BrowserModule,
     CommonModule,
-    NgLazyLoadComponentModule,
+    NgLazyLoadComponentModule
   ],
-  bootstrap: [AppComponent],
-  ],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }
 ```
@@ -63,7 +62,7 @@ export class TestLazyComponent {
 @NgModule({
   declarations: [TestLazyComponent],
   imports: [CommonModule],
-  exports: [TestLazyComponent],
+  exports: [TestLazyComponent]
 })
 export class TestLazyModule {}
 ```
@@ -80,7 +79,7 @@ export { TestLazyComponent }
 @NgModule({
   declarations: [TestLazyComponent],
   imports: [CommonModule],
-  exports: [TestLazyComponent],
+  exports: [TestLazyComponent]
 })
 export class TestLazyModule {}
 ```
