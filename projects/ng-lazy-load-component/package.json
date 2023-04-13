@@ -1,6 +1,6 @@
 {
   "name": "ng-lazy-load-component",
-  "version": "15.0.4",
+  "version": "15.0.5",
   "description": "Lazy load Angular component into HTML template without routing.",
   "repository": {
     "type": "git",
