@@ -76,7 +76,7 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
       const result = await lazyImporter();
       if (result.module) {
         const lazyModuleRef = createNgModule(result.module, result.injector || this.injector);
-        this.componentRef = this.vcRef.createComponent(result.component, { ngModuleRef: lazyModuleRef, injector: this.injector });
+        this.componentRef = this.vcRef.createComponent(result.component, { ngModuleRef: lazyModuleRef, injector: result.injector || this.injector });
       } else {
         this.componentRef = this.vcRef.createComponent(result.component, { injector: result.injector || this.injector });
       }
