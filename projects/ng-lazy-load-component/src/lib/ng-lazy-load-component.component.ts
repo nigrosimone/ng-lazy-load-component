@@ -17,8 +17,10 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 
+type ExtractEventEmitter<P> = P extends EventEmitter<infer T> ? T : never;
+
 export type NgLazyLoadComponentImporter = () => Promise<{ component: Type<any>, module?: Type<any>, injector?: Injector }>;
-export type NgLazyLoadComponentOutput = { property: string, value: any };
+export type NgLazyLoadComponentOutput<T = Record<string, any>> = { property: keyof T, value: ExtractEventEmitter<T[keyof T]> | any };
 
 @Component({
   selector: 'ng-lazy-load-component',
@@ -27,7 +29,7 @@ export type NgLazyLoadComponentOutput = { property: string, value: any };
 <ng-content *ngIf="error" select="[error]"></ng-content>
 <ng-container #vcRef></ng-container>
 `,
-changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
 
@@ -47,10 +49,10 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
   protected isLoading = false;
   protected error = false;
 
-  private componentRef!: ComponentRef<any>;
+  public componentRef!: ComponentRef<any>;
   private subOutput: Array<Subscription> = [];
 
-  constructor(private injector: Injector, private cdr: ChangeDetectorRef) { 
+  constructor(private injector: Injector, private cdr: ChangeDetectorRef) {
     this.cdr.detach();
   }
 
@@ -68,10 +70,8 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
     try {
       this.isLoading = true;
       this.error = false;
+      this.unload();
       this.cdr.detectChanges();
-      if (this.componentRef) {
-        this.vcRef.clear();
-      }
       const result = await lazyImporter();
       if (result.module) {
         const lazyModuleRef = createNgModule(result.module, result.injector || this.injector);
@@ -91,6 +91,12 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
     }
   }
 
+  unload() {
+    if (this.componentRef) {
+      this.vcRef.clear();
+    }
+  }
+
   private setInput() {
     if (this.componentRef && this._componentInput) {
       for (const property in this._componentInput) {
@@ -106,7 +112,7 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
       for (const property in this.componentRef.instance) {
         const compRefProp = this.componentRef.instance[property];
         if (compRefProp instanceof EventEmitter) {
-          this.subOutput.push(compRefProp.subscribe(value => this.componentOutput.emit({ property, value })));
+          this.subOutput.push(compRefProp.subscribe(value => this.componentOutput.emit({ property: property, value: value })));
         }
       }
     }
