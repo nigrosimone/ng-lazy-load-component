@@ -21,6 +21,7 @@ type ExtractEventEmitter<P> = P extends EventEmitter<infer T> ? T : never;
 
 export type NgLazyLoadComponentImporter = () => Promise<{ component: Type<any>, module?: Type<any>, injector?: Injector }>;
 export type NgLazyLoadComponentOutput<T = Record<string, any>> = { property: keyof T, value: ExtractEventEmitter<T[keyof T]> | any };
+export type NgLazyLoadComponentInput<T = Record<string, any>, P extends keyof T = keyof T> = T[P];
 
 @Component({
   selector: 'ng-lazy-load-component',

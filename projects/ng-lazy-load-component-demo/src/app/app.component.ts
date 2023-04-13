@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { NgLazyLoadComponentImporter, NgLazyLoadComponentOutput } from '../../../ng-lazy-load-component/src/public-api';
-import type { TestStandaloneComponent } from './test-standalone.component';
+import { NgLazyLoadComponentImporter, NgLazyLoadComponentInput, NgLazyLoadComponentOutput } from '../../../ng-lazy-load-component/src/public-api';
+import type { TestClassicComponent } from './test-classic.module';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -20,8 +20,9 @@ import type { TestStandaloneComponent } from './test-standalone.component';
 export class AppComponent {
 
   public loaded = false;
-  public testInput1 = 0;
-  public testInput2 = 0;
+  
+  public testInput1: NgLazyLoadComponentInput<TestClassicComponent, 'testInput1'> = 0;
+  public testInput2: NgLazyLoadComponentInput<TestClassicComponent, 'testInput2'> = 0;
 
   lazyImporterClassic: NgLazyLoadComponentImporter = () => import('./test-classic.module').then((m) => ({
     module: m.TestLazyModule,
@@ -37,7 +38,7 @@ export class AppComponent {
     component: m.TestStandaloneComponent
   }));
 
-  onComponentOutput(event: NgLazyLoadComponentOutput<TestStandaloneComponent>) {
+  onComponentOutput(event: NgLazyLoadComponentOutput<TestClassicComponent>) {
     switch (event.property) {
       case 'testOutput1': this.testInput1 = event.value + 1; break;
       case 'testOutput2': this.testInput2 = event.value + 1; break;

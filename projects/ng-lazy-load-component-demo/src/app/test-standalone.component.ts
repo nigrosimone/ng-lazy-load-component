@@ -14,7 +14,7 @@ import {
   Input2: {{testInput2 | json}} <button (click)="testOutput2.emit(testInput2)">Output2</button>
   `,
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule],
 })
 export class TestStandaloneComponent {
   @Input() testInput1 = 0;

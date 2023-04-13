@@ -89,7 +89,7 @@ export class TestLazyModule {}
 
 ```ts
 import { Component } from '@angular/core';
-import { NgLazyLoadComponentImporter, NgLazyLoadComponentOutput } from 'ng-lazy-load-component';
+import { NgLazyLoadComponentImporter, NgLazyLoadComponentOutput, NgLazyLoadComponentInput } from 'ng-lazy-load-component';
 // import ONLY type definition of the component
 import type { TestLazyComponent } from './test-lazy';
 
@@ -107,8 +107,9 @@ import type { TestLazyComponent } from './test-lazy';
   `,
 })
 export class AppComponent {
-  public testInput1 = 0; // test-lazy component `@Input() testInput1`
-  public testInput2 = 0; // test-lazy component `@Input() testInput2`
+  // NgLazyLoadComponentInput force Input type casting between ng-lazy-load-component and lazy loaded component
+  public testInput1: NgLazyLoadComponentInput<TestLazyComponent, 'testInput1'> = 0; // bind with test-lazy component `@Input() testInput1`
+  public testInput2: NgLazyLoadComponentInput<TestLazyComponent, 'testInput2'> = 0; // bind with test-lazy component `@Input() testInput2`
 
   /** Lazy load the component with `import()` */
   lazyImporter: NgLazyLoadComponentImporter = () => import('./test-lazy').then((m) => ({
@@ -116,7 +117,10 @@ export class AppComponent {
     module: m.TestLazyModule // NgModule is optional!
   }));
 
-  /** test-lazy component outputs: `@Output() testOutput1` and `@Output() testOutput2` */
+  /** 
+   * test-lazy component outputs: `@Output() testOutput1` and `@Output() testOutput2` 
+   * NgLazyLoadComponentOutput force Output type casting between ng-lazy-load-component and lazy loaded component
+   */
   onComponentOutput(event: NgLazyLoadComponentOutput<TestLazyComponent>) {
     switch (event.property) {
       case 'testOutput1': this.testInput1 = event.value + 1; break;
