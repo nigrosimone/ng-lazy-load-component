@@ -53,9 +53,7 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
   public componentRef!: ComponentRef<any>;
   private subOutput: Array<Subscription> = [];
 
-  constructor(private injector: Injector, private cdr: ChangeDetectorRef) {
-    this.cdr.detach();
-  }
+  constructor(private injector: Injector) {}
 
   ngOnDestroy(): void {
     this.unsubscribe();
@@ -72,7 +70,6 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
       this.isLoading = true;
       this.error = false;
       this.unload();
-      this.cdr.detectChanges();
       const result = await lazyImporter();
       if (result.module) {
         const lazyModuleRef = createNgModule(result.module, result.injector || this.injector);
@@ -88,7 +85,6 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
       throw err;
     } finally {
       this.isLoading = false;
-      this.cdr.detectChanges();
     }
   }
 
@@ -103,7 +99,6 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
       for (const property in this._componentInput) {
         this.componentRef.setInput(property, this._componentInput[property]);
       }
-      this.cdr.detectChanges();
     }
   }
 
