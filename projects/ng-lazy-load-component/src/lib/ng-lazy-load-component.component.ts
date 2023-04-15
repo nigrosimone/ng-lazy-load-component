@@ -12,7 +12,6 @@ import {
   OnDestroy,
   OnChanges,
   SimpleChanges,
-  ChangeDetectorRef,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
