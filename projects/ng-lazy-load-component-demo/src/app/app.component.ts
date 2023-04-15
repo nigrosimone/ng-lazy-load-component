@@ -9,10 +9,13 @@ import type { TestClassicComponent } from './test-classic.module';
   <button (click)="loaded = false" [disabled]="!loaded">Unload</button> <button (click)="loaded = true" [disabled]="loaded">Load</button>
   <hr>
   <h2>Classic</h2>
+  <button (click)="lazyImporterClassic = $any(null)">Null</button><br />
   <ng-lazy-load-component [lazyImporter]="lazyImporterClassic" [componentInput]="{testInput1, testInput2}" (componentOutput)="onComponentOutput($event)" *ngIf="loaded"></ng-lazy-load-component>
   <h2>Standalone</h2>
-  <ng-lazy-load-component [lazyImporter]="lazyImporterClassic" [componentInput]="{testInput1, testInput2}" (componentOutput)="onComponentOutput($event)" *ngIf="loaded"></ng-lazy-load-component>
+  <button (click)="lazyImporterStandalone = $any(null)">Null</button><br />
+  <ng-lazy-load-component [lazyImporter]="lazyImporterStandalone" [componentInput]="{testInput1, testInput2}" (componentOutput)="onComponentOutput($event)" *ngIf="loaded"></ng-lazy-load-component>
   <h2>Separated</h2>
+  <button (click)="lazyImporterSeparated = $any(null)">Null</button><br />
   <ng-lazy-load-component [lazyImporter]="lazyImporterSeparated" [componentInput]="{testInput1, testInput2}" (componentOutput)="onComponentOutput($event)" *ngIf="loaded"></ng-lazy-load-component>
   
   `,
@@ -20,7 +23,7 @@ import type { TestClassicComponent } from './test-classic.module';
 export class AppComponent {
 
   public loaded = false;
-  
+
   public testInput1: NgLazyLoadComponentInput<TestClassicComponent, 'testInput1'> = 0;
   public testInput2: NgLazyLoadComponentInput<TestClassicComponent, 'testInput2'> = 0;
 
@@ -45,5 +48,9 @@ export class AppComponent {
       default:
         break;
     }
+  }
+
+  onNull(){
+    this.lazyImporterClassic = null as any;
   }
 }

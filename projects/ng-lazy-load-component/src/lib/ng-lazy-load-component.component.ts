@@ -11,16 +11,26 @@ import {
   Output,
   OnDestroy,
   OnChanges,
-  SimpleChanges,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 type ExtractEventEmitter<P> = P extends EventEmitter<infer T> ? T : never;
 
+type ComponentChange<T, P extends keyof T> = {
+  previousValue: T[P];
+  currentValue: T[P];
+  firstChange: boolean;
+};
+
+type ComponentChanges<T> = {
+  [P in keyof T]?: ComponentChange<T, P>;
+};
+
 export type NgLazyLoadComponentImporter = () => Promise<{ component: Type<any>, module?: Type<any>, injector?: Injector }>;
 export type NgLazyLoadComponentOutput<T = Record<string, any>> = { property: keyof T, value: ExtractEventEmitter<T[keyof T]> | any };
 export type NgLazyLoadComponentInput<T = Record<string, any>, P extends keyof T = keyof T> = T[P];
+export type NgLazyLoadComponentMultiInput<T = Record<string, any>> = Partial<T>;
 
 @Component({
   selector: 'ng-lazy-load-component',
@@ -35,7 +45,7 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
 
   @ViewChild('vcRef', { read: ViewContainerRef }) private vcRef!: ViewContainerRef;
 
-  @Input() lazyImporter!: NgLazyLoadComponentImporter;
+  @Input() lazyImporter: NgLazyLoadComponentImporter | null = null;
 
   private _componentInput!: Record<string, any>;
   @Input()
@@ -52,15 +62,19 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
   public componentRef!: ComponentRef<any>;
   private subOutput: Array<Subscription> = [];
 
-  constructor(private injector: Injector) {}
+  constructor(private injector: Injector) { }
 
   ngOnDestroy(): void {
     this.unsubscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['lazyImporter'] && changes['lazyImporter'].currentValue) {
-      this.load(this.lazyImporter);
+  ngOnChanges(changes: ComponentChanges<NgLazyLoadComponentComponent>) {
+    if (changes.lazyImporter) {
+      if (changes.lazyImporter.currentValue) {
+        this.load(changes.lazyImporter.currentValue);
+      } else {
+        this.unload();
+      }
     }
   }
 
@@ -88,6 +102,7 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
   }
 
   unload() {
+    this.unsubscribe();
     if (this.componentRef) {
       this.vcRef.clear();
     }
