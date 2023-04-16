@@ -4,7 +4,9 @@ import {
   EventEmitter,
   Input,
   NgModule,
+  OnChanges,
   Output,
+  SimpleChanges,
 } from '@angular/core';
 
 @Component({
@@ -15,11 +17,14 @@ import {
   Input2: {{testInput2 | json}} <button (click)="testOutput2.emit(testInput2)">Output2</button>
   `,
 })
-export class TestClassicComponent {
+export class TestClassicComponent implements OnChanges {
   @Input() testInput1 = 0;
   @Input() testInput2 = 0;
   @Output() testOutput2: EventEmitter<number> = new EventEmitter<number>();
   @Output() testOutput1: EventEmitter<number> = new EventEmitter<number>();
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes)
+  }
 }
 
 @NgModule({

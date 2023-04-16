@@ -157,7 +157,10 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
   private setInput() {
     if (this.componentRef && this._componentInput) {
       for (const property in this._componentInput) {
-        this.componentRef.setInput(property, this._componentInput[property]);
+        const value = this._componentInput[property];
+        if (this.componentRef.instance[property] !== value) {
+          this.componentRef.setInput(property, value);
+        }
       }
     }
   }
