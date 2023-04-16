@@ -10,10 +10,14 @@ import type { TestClassicComponent } from './test-classic.module';
 <ng-lazy-load-component 
 [lazyImporter]="lazyImporterClassic" 
 [componentInput]="{testInput1, testInput2}" 
-(componentOutput)="onComponentOutput($event)" *ngIf="loaded"></ng-lazy-load-component>
+(componentOutput)="onComponentOutput($event)" 
+(loaded)="loaded = true"
+*ngIf="load"></ng-lazy-load-component>
 `})
 class TestComponent {
-    public loaded = true;
+    
+    public load = false;
+    public loaded = false;
     public testInput1: NgLazyLoadComponentInput<TestClassicComponent, 'testInput1'> = 0;
     public testInput2: NgLazyLoadComponentInput<TestClassicComponent, 'testInput2'> = 0;
 
@@ -54,17 +58,20 @@ describe('NgLazyLoadComponentComponent', () => {
     });
 
     it('test', async() => {
-        component.loaded = true;
+        component.load = true;
         component.testInput1 = 5;
         fixture.detectChanges();
         await fixture.whenStable()
+
+        expect(component.loaded).toBeTrue();
+
         expect(element.textContent?.trim()).toBe('Input1: 5 Output1 Input2: 0 Output2');
 
         element.getElementsByTagName('button')[0].click();
         fixture.detectChanges();
         expect(element.textContent?.trim()).toBe('Input1: 6 Output1 Input2: 0 Output2');
 
-        component.loaded = false;
+        component.load = false;
         fixture.detectChanges();
         expect(element.textContent?.trim()).toBe('');
     });
