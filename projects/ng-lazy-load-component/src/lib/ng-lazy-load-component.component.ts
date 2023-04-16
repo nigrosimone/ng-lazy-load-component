@@ -110,6 +110,15 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
     }
   }
 
+  /**
+   * Load the component
+   * ```
+   * const lazyImporter: NgLazyLoadComponentImporter = () => import('./test.module').then((m) => ({
+   *   component: m.TestComponent,
+   *   module: m.TestModule // NgModule is optional!
+   * }));
+   * ```
+   */
   async load(lazyImporter: NgLazyLoadComponentImporter) {
     try {
       this.isLoading = true;
@@ -135,6 +144,9 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
     }
   }
 
+  /**
+   * Unload the component
+   */
   unload() {
     this.unsubscribe();
     if (this.componentRef) {
