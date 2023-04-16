@@ -45,8 +45,24 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
 
   @ViewChild('vcRef', { read: ViewContainerRef }) private vcRef!: ViewContainerRef;
 
+  /**
+   * Lazy load method.
+   * Lazy load the component with `import()`, eg.:
+   * ```
+   * lazyImporter: NgLazyLoadComponentImporter = () => import('./test.module').then((m) => ({
+   *   component: m.TestComponent,
+   *   module: m.TestModule // NgModule is optional!
+   * }));
+   * ```
+   */
   @Input() lazyImporter: NgLazyLoadComponentImporter | null = null;
 
+  /**
+   * Component inputs
+   * ```
+   * <ng-lazy-load-component [componentInput]="{testInput1, testInput2}">
+   * ```
+   */
   private _componentInput!: Record<string, any>;
   @Input()
   set componentInput(value: Record<string, any>) {
@@ -54,11 +70,27 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
     this.setInput();
   }
 
+  /**
+   * Component outputs
+   */
   @Output() componentOutput: EventEmitter<NgLazyLoadComponentOutput> = new EventEmitter();
+
+  /**
+   * Component loaded
+   */
+  @Output() loaded: EventEmitter<ComponentRef<any>> = new EventEmitter();
+
+  /**
+   * Component load failed
+   */
+  @Output() failed: EventEmitter<any> = new EventEmitter();
 
   protected isLoading = false;
   protected error = false;
 
+  /**
+   * Component istance
+   */
   public componentRef!: ComponentRef<any>;
   private subOutput: Array<Subscription> = [];
 
@@ -93,8 +125,10 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
       this.setInput();
       this.setOutput();
       this.componentRef.changeDetectorRef.detectChanges();
+      this.loaded.emit(this.componentRef);
     } catch (err) {
       this.error = true;
+      this.failed.emit(err);
       throw err;
     } finally {
       this.isLoading = false;
