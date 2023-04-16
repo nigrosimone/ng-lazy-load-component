@@ -4,7 +4,7 @@ Lazy load Angular component into HTML template without routing.
 
 ## Description
 
-This library help to lazy load Angular component dynamically and render a at runtime. The `NgLazyLoadComponent` takes a function named `lazyImporter` as an input, which returns a `Promise` containing the component to be loaded.
+This library help to lazy load Angular component dynamically and render a at runtime. The `NgLazyLoadComponent` takes a function named `lazyImporter` as an input, which returns a `Promise` containing the component to be loaded. `NgLazyLoadComponent` has full life-cycle support for inputs and outputs.
 
 See the [stackblitz demo](https://stackblitz.com/edit/demo-ng-lazy-load-component?file=src%2Fapp%2Fapp.component.ts).
 
