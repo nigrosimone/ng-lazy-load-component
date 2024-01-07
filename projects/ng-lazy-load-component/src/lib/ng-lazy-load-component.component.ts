@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Component,
   Injector,
@@ -89,7 +90,7 @@ export class NgLazyLoadComponentComponent implements OnDestroy, OnChanges {
   protected error = false;
 
   /**
-   * Component istance
+   * Component instance
    */
   public componentRef!: ComponentRef<any>;
   private subOutput: Array<Subscription> = [];

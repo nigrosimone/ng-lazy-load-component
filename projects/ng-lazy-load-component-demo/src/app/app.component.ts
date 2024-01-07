@@ -51,6 +51,7 @@ export class AppComponent {
   }
 
   onNull(){
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.lazyImporterClassic = null as any;
   }
 }
